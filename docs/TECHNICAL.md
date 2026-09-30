@@ -208,7 +208,10 @@ recorded, which is the outcome an evaluation is supposed to be allowed to have.
 
 The headline number is therefore neither of those. It is the **known
 false-delivery residual**: of every distinct query a wrong-delivery receipt was
-recorded for, the share the current index still answers with prose. Both halves
+recorded for, the share the current index still answers with prose. A `wrong`
+filed against an abstention complains about silence rather than a delivery, so
+it stays out of the denominator — counting it made the residual rise whenever
+retrieval learned to answer such a query. Both halves
 are facts somebody already recorded, nothing new has to be collected for the
 next reading to exist, and it falls only when retrieval improves. The rate a
 memory system would most like to publish — how often its answers were actually

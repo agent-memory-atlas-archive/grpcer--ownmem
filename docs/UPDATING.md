@@ -23,6 +23,24 @@ host. See [PLUGINS.md](./PLUGINS.md) for per-host refresh steps. After the
 package bump, `init --update` refreshes the in-repo adapters those hosts
 actually follow.
 
+## Moving from 0.7.0 to 0.8.0
+
+No migration step. Update the package; `init --update` is not required, because
+no hook entry or adapter changed. Three behaviour changes are visible:
+
+- The Edit/Write/Read hook now injects pointers. 0.7.0 dropped every
+  pointer-only answer before the agent saw it, so expect hook context on edits
+  where there was none, each pointer marked as a place to look, not an answer.
+- `ownmem report` is `ownmem-report/v10`. It adds `usage_window`, adds
+  `quality.false_delivery.abstention_queries`, and removes
+  `adoption.authority_observed_traces` and `adoption.authority_follow_rate`.
+  The north star's denominator shrinks on upgrade: `wrong` receipts filed
+  against an abstention leave it. `recall.consumed` events stop carrying
+  `authority_followed`; rows that have it still validate.
+- A CLI or MCP recall and a later MCP `read` or `attribute` now pair at session
+  strength when the agent's session variable is set, where every one paired as
+  `recent` before.
+
 ## Moving from 0.6.0 to 0.7.0
 
 **After `npm install --save-dev ownmem@latest`, run `ownmem init --update`
@@ -121,9 +139,10 @@ The hook configuration is now v2 and the installed version is recorded in
 replaced where they stand rather than appended beside, and hooks written by hand
 are left untouched. `init --check` reports an installation that is still on v1.
 
-Codex hooks take three separate permissions before they run: `hooks = true` under
-`[features]` in `~/.codex/config.toml`, the project trusted in that same file,
-and the hook trust prompt on first sight. A project missing any of them is silent
+Codex hooks take three separate permissions before they run: the `hooks` feature
+under `[features]` in `~/.codex/config.toml` (on by default since Codex 0.154),
+the project trusted in that same file, and the hook trust prompt -- on first
+sight, and again for any entry an update changes (approve it through `/hooks`). A project missing any of them is silent
 rather than failing. Grok runs a repository's hooks only while the checkout is in
 its trusted-folder list. `init --check` reports both.
 

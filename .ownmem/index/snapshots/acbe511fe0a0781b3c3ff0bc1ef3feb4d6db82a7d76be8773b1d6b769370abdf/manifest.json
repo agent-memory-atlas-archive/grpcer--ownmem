@@ -1,11 +1,11 @@
 {
   "artifacts": {
     "documents": {
-      "bytes": 22202,
+      "bytes": 11278,
       "file": "documents.json",
       "records": 4,
-      "schema": "ownmem-index.documents/v2",
-      "sha256": "932a39b4ac516c161731be5c0f89d0ea93177da72a24a2865ac1d6ed5559c78b"
+      "schema": "ownmem-index.documents/v1",
+      "sha256": "bb9a90a15655d2615f1ca919e5f17aad9e70417eaeaf996900aebdd051c83bf6"
     },
     "exact_map": {
       "bytes": 8349,
@@ -29,27 +29,27 @@
       "sha256": "bce380337cfb26111ce13365dbd39cbff99593ada28d382fc2e2bd7d9f29f026"
     },
     "ranking": {
-      "bytes": 2605,
+      "bytes": 2482,
       "file": "ranking.json",
       "records": 10,
-      "schema": "ownmem-index.ranking/v4",
-      "sha256": "ebb2190cc4f42e2656d082c72a635f3cb53016c5f45476348ce808248f218f07"
+      "schema": "ownmem-index.ranking/v3",
+      "sha256": "1d29a954724cd6dfec0a7ac00a3c851c03bdd774bb4a1e5f208f31a6fec322c1"
     }
   },
   "compatibility": {
     "fallback_policy": "rebuild-then-markdown-v1",
-    "minimum_reader_version": 5,
-    "query_result_schema": "ownmem-query-result/v6"
+    "minimum_reader_version": 4,
+    "query_result_schema": "ownmem-query-result/v1"
   },
   "compiler": {
     "name": "ownmem-compiler",
-    "version": "0.10.0"
+    "version": "0.6.1"
   },
   "schema": "ownmem-index/v1",
   "snapshot": {
-    "content_sha256": "0de6bda4d32b02bd2d9ddd64ba809b67942bc6fadf7b9a0efe4b8533e010133f",
-    "created_at": "2026-09-22T05:25:29.776Z",
-    "id": "d50d302f81f95add52bc2add5c0e247f60e0d48e55138572fc5659f2e1d4eda0"
+    "content_sha256": "f4495a95e713bc0c65597424d0ce82d59c883a69bc89fda594167c014a3b2891",
+    "created_at": "2026-08-18T09:36:09.763Z",
+    "id": "acbe511fe0a0781b3c3ff0bc1ef3feb4d6db82a7d76be8773b1d6b769370abdf"
   },
   "source": {
     "active_topics": 4,

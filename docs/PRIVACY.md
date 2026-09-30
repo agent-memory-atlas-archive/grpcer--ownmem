@@ -12,6 +12,11 @@ stored locally, masked in dashboard responses, and excluded from reports.
 Local operational events use derived identifiers instead of raw queries.
 They remain under the initialized repository's ignored local-data directory.
 The public package contains no telemetry endpoint and no automatic upload.
+To pair a full-text open with the recall that named it, the local recall ledger
+keeps the host's opaque session identifier: the hook reads it from its input, and
+the CLI and MCP server from the running agent's own environment variable
+(`CLAUDE_CODE_SESSION_ID`, `CODEX_SESSION_ID`/`CODEX_THREAD_ID`, or
+`GROK_SESSION_ID`). It is never uploaded, and rows age out after 30 minutes.
 Explicit retrieval feedback (`correct`, `wrong`, `retrieval_miss`,
 `coverage_gap`, `stale`, `conflict`) is different: it stores the raw query in
 the ignored local review inbox so a maintainer can reproduce the result.

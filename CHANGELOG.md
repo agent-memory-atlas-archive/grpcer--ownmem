@@ -5,6 +5,67 @@ Versioning.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-30
+
+### Added
+
+- `report` prints a `Usage (whole window, every stack)` line by default and
+  carries it as `usage_window` (`ownmem-report/v10`): recalls by surface and by
+  stack version, prose and pointer answers delivered, full-text opens, and
+  retrieval receipts. The current-stack funnel restarts at every version bump,
+  so the day after one it could not say whether memory was being used at all.
+- `ownmem recall --feedback VERDICT --multi -- 'a' 'b'` records a receipt against
+  the fused answer; every replay of that receipt re-asks the same fusion.
+- `ownmem mcp --no-observability` for tests and probes run against a real
+  checkout.
+
+### Fixed
+
+- A `--feedback` replay no longer writes `recall.completed` / `recall.delivered`:
+  each receipt was counted as one more recall in the report judging it. The
+  receipt now carries `returned_count` itself.
+- MCP recalls are recorded with surface `mcp` (they were filed as `cli`), and
+  record their delivery, so the server's own `read` pairs with them.
+- `recall.consumed.via` names the surface that collected the open; the Read hook
+  used to copy the recall's surface instead.
+- Grok's edits and reads trigger recall: its hook payload uses camelCase keys and
+  its own tool names (`search_replace`, `write`, `read_file` with
+  `target_file`), which the hook did not recognise, so it exited silently.
+- Codex setup guidance: hooks are on by default since Codex 0.154; the step that
+  matters is approving changed entries again through `/hooks`.
+- The Edit/Write/Read hook delivers pointers. It decided by `abstain.abstained`,
+  and a pointers-tier envelope is abstained (no prose) while carrying the
+  memories to go read, so every pointer-only answer was dropped before the agent
+  saw it — 314 in one week on the maintainer's machine. Pointers are now
+  injected with a line stating they are places to look, not answers; they are
+  deduplicated per session apart from quotes, so having been pointed at never
+  stops a memory from being quoted later; and they enter the recall ledger and
+  the delivery event, so opening one pairs with the recall that named it.
+- A CLI or MCP recall, and a later MCP `read` or `attribute`, pair at session
+  strength. They took no session from anywhere, so every open and every
+  self-attribution label paired as `recent`. The host session is now read from
+  the resolved agent's own variable (`CLAUDE_CODE_SESSION_ID`,
+  `CODEX_SESSION_ID`/`CODEX_THREAD_ID`, `GROK_SESSION_ID`); a nested run never
+  inherits the outer host's session.
+- The north star no longer counts `wrong` receipts filed against an abstention.
+  Those complain about silence, so once recall learned to answer one it was
+  counted as a false delivery and the residual rose as retrieval improved. They
+  are reported as `false_delivery.abstention_queries` and excluded from the
+  denominator; a query stays in if any receipt for it saw a delivery.
+
+### Changed
+
+- `recall.consumed.via` and `adoption.coverage_source` accept `shell`, for a
+  host that records full-text reads made from a shell command.
+
+### Removed
+
+- `recall.consumed.authority_followed` and the report's
+  `adoption.authority_observed_traces` / `authority_follow_rate`. No producer
+  could observe whether the authority documents were opened, so every event
+  carried null and the rate had no sample in its lifetime. The event schema
+  still accepts the field so earlier rows validate.
+
 ## [0.7.0] - 2026-09-22
 
 The observation-window and fleet work that was built and removed again between

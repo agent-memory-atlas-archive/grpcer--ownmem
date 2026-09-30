@@ -10,7 +10,7 @@
       "name": "ownmem",
       "source": "./plugins/ownmem",
       "description": "Git-native project memory for AI coding agents, with deterministic local recall, evidence gates, and layered delivery that quotes, points, or abstains.",
-      "version": "0.7.0"
+      "version": "0.8.0"
     }
   ]
 }

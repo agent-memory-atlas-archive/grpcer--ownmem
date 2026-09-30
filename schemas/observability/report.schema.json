@@ -21,11 +21,12 @@
     "governance",
     "gates",
     "data_quality",
-    "recommendations"
+    "recommendations",
+    "usage_window"
   ],
   "properties": {
     "schema": {
-      "const": "ownmem-report/v9"
+      "const": "ownmem-report/v10"
     },
     "generated_at": {
       "type": "string",
@@ -241,6 +242,43 @@
         }
       }
     },
+    "usage_window": {
+      "description": "How much recall was used over the whole requested window, across every recall stack in it. Background only: it never judges the current stack, which the delivery block alone does. It exists because the current-stack block restarts from zero at every version bump, and a report read the day after one had nothing to say about volume.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recalls",
+        "recalls_by_surface",
+        "stack_versions",
+        "prose_delivered_traces",
+        "pointer_delivered_traces",
+        "fulltext_open_traces",
+        "receipts"
+      ],
+      "properties": {
+        "recalls": {
+          "$ref": "#/$defs/count"
+        },
+        "recalls_by_surface": {
+          "$ref": "#/$defs/countMap"
+        },
+        "stack_versions": {
+          "$ref": "#/$defs/countMap"
+        },
+        "prose_delivered_traces": {
+          "$ref": "#/$defs/count"
+        },
+        "pointer_delivered_traces": {
+          "$ref": "#/$defs/count"
+        },
+        "fulltext_open_traces": {
+          "$ref": "#/$defs/count"
+        },
+        "receipts": {
+          "$ref": "#/$defs/count"
+        }
+      }
+    },
     "delivery": {
       "type": "object",
       "additionalProperties": false,
@@ -324,9 +362,7 @@
         "adopted_recalls",
         "adoption_rate",
         "top1_adoption_rate",
-        "topk_adoption_rate",
-        "authority_observed_traces",
-        "authority_follow_rate"
+        "topk_adoption_rate"
       ],
       "properties": {
         "eligible_recalls": {
@@ -346,7 +382,9 @@
               "hook",
               "claude-hook",
               "cli",
-              "manual"
+              "mcp",
+              "manual",
+              "shell"
             ]
           }
         },
@@ -369,12 +407,6 @@
           "$ref": "#/$defs/ratio"
         },
         "topk_adoption_rate": {
-          "$ref": "#/$defs/ratio"
-        },
-        "authority_observed_traces": {
-          "$ref": "#/$defs/count"
-        },
-        "authority_follow_rate": {
           "$ref": "#/$defs/ratio"
         }
       }
@@ -784,6 +816,7 @@
             "stream",
             "verdict",
             "distinct_queries",
+            "abstention_queries",
             "still_quoted",
             "no_longer_quoted",
             "unreplayable",
@@ -800,7 +833,11 @@
             },
             "distinct_queries": {
               "$ref": "#/$defs/count",
-              "description": "Denominator: distinct queries somebody filed a `wrong` receipt for, over the whole ledger rather than the report window. A residual that shrank because old complaints aged out of a window would be an artefact."
+              "description": "Denominator: distinct queries somebody filed a `wrong` receipt for against a delivered answer (or an unrecorded shape), over the whole ledger rather than the report window. A residual that shrank because old complaints aged out of a window would be an artefact."
+            },
+            "abstention_queries": {
+              "$ref": "#/$defs/count",
+              "description": "Distinct queries whose every `wrong` receipt was filed against an abstention. Kept out of the denominator: the complaint was that nothing came back, so answering them now is the fix, not a false delivery."
             },
             "still_quoted": {
               "$ref": "#/$defs/count"
@@ -1902,6 +1939,7 @@
             "hook",
             "claude-hook",
             "cli",
+            "mcp",
             "unknown"
           ]
         },
