@@ -5,6 +5,28 @@ Versioning.
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-10-06
+
+### Fixed
+
+- `compile` rebuilds a memory's compiled trust when its evidence changes, not
+  only when a memory source does. The authority and integrity recorded in a
+  snapshot are measured against the anchored code and the test-execution
+  ledger, and neither lives in the memory directory, so a snapshot keyed on the
+  sources alone kept whatever was measured the last time a topic was edited: a
+  memory whose code had since drifted stayed at full authority, and one whose
+  failing test had been fixed stayed demoted. Recall re-measures on every
+  query, so the snapshot and the runtime disagreed about the same receipt — on
+  the maintainer's corpus, 26 of 354 compiled entries were stale, 25 of them in
+  the over-trusting direction. Both reuse decisions (skipping an unchanged
+  compile, and reusing one unchanged document) now also require the compiled
+  trust to match a fresh measurement; only the documents that fail it are
+  recompiled.
+- The dashboard catalog key for the API key field label is `api_key_label`. As
+  `api_key`, the German entry `api_key: 'API-Schlüssel'` matched the
+  hard-coded-secret pattern of plugin scanners. The form field name and the
+  stored configuration are unchanged.
+
 ## [0.8.0] - 2026-09-30
 
 ### Added

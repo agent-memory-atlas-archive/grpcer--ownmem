@@ -23,6 +23,15 @@ host. See [PLUGINS.md](./PLUGINS.md) for per-host refresh steps. After the
 package bump, `init --update` refreshes the in-repo adapters those hosts
 actually follow.
 
+## Moving from 0.8.0 to 0.8.1
+
+No migration step, and `init --update` is not required. The first `ownmem
+compile` after the update may rebuild entries although no memory file changed:
+it re-measures each compiled entry's trust against the code and test results
+it cites, and recompiles the ones whose recorded authority no longer matches.
+Expect some entries to move to advisory and, where a failing test has since
+been fixed, some to move back.
+
 ## Moving from 0.7.0 to 0.8.0
 
 No migration step. Update the package; `init --update` is not required, because
