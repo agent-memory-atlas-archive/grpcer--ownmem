@@ -23,6 +23,33 @@ host. See [PLUGINS.md](./PLUGINS.md) for per-host refresh steps. After the
 package bump, `init --update` refreshes the in-repo adapters those hosts
 actually follow.
 
+## Moving from 0.8.1 to 0.8.2
+
+No migration step. Run `ownmem init --check` once: a repository that selected
+both the Claude and Codex hosts and imports `AGENTS.md` from `CLAUDE.md` on a
+line of its own now reports the duplicate instruction block in `CLAUDE.md` as
+drifted, and `init --update` removes it while leaving the rest of the file byte
+for byte. Every other installation reports `ready` and needs nothing.
+
+Three behaviour changes are visible after the package bump:
+
+- The Edit/Write hook delivers answers it used to drop. A later edit that
+  repeats one memory the session already saw and brings a new pointer with it
+  now reaches the agent with the new part only; under 0.8.0 and 0.8.1 the
+  client rejected that response and injected nothing. If a resident daemon from
+  the previous version is still running, the next session's `hook warm`
+  replaces it; until then the new client accepts the old daemon's responses,
+  so nothing is lost either way.
+- A path-only hook query stays a path even when a folder or file name looks
+  like an error code or a decision word, so those edits take the strict path
+  plan: fewer lanes, no graph fan-out, and no n-gram pointers.
+- `ownmem health` prints the hook's unreachable memories in two groups, and
+  `evidence.path_anchor_reach` carries `unanchored_naming_file` and
+  `unanchored_no_file` instead of `unreachable`. `ownmem report` keeps its
+  schema; the `consumed-without-delivery` data gap and
+  `delivery.fulltext_open_without_delivery_events` now count only opens on a
+  trace no surface delivered, so expect that figure to fall.
+
 ## Moving from 0.8.0 to 0.8.1
 
 No migration step, and `init --update` is not required. The first `ownmem

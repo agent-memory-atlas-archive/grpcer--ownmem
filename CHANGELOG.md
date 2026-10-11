@@ -3,7 +3,61 @@
 All notable changes follow Keep a Changelog. Versions follow Semantic
 Versioning.
 
-## [Unreleased]
+## [0.8.2] - 2026-10-11
+
+### Fixed
+
+- `init` no longer writes the instruction block into a `CLAUDE.md` that imports
+  `AGENTS.md`. Claude Code inlines `@AGENTS.md` when it sits on a line of its
+  own, so a repository that keeps one shared rule file already delivers the
+  `AGENTS.md` block to Claude; the second copy in `CLAUDE.md` loaded the same
+  instructions twice in every session. With both hosts selected and the import
+  present, `init --check` reports a leftover block as drifted and
+  `init --update` removes it, leaving the rest of the file byte for byte.
+  Without Codex among the hosts, or with `@AGENTS.md` only mentioned inside a
+  sentence, `CLAUDE.md` keeps its own block as before.
+- The Edit/Write hook no longer drops an answer that repeats part of what the
+  session already saw. When a later edit quotes a memory the session was
+  already given and brings a new pointer with it, the daemon withholds the
+  repeat and answers with the remainder, flagged `deduplicated: true`. The
+  response contract pinned that flag to a null result, so the client rejected
+  every partial repeat as invalid and failed open: nothing reached the agent,
+  while the daemon had already recorded the answer as delivered. In the first
+  ten days of 0.8.0 one repository lost 38 hook answers this way, logged as
+  `PRETOOL_FAIL_OPEN` in `.local-test/memory-hook/diagnostics.jsonl`. The
+  contract now reads `deduplicated` as "something was withheld" and lets the
+  result be null or the remainder.
+- A query that is one repository path and nothing else is classified as a
+  path, whatever its segments spell. A path through a dated work-package folder
+  (`WORK-20261009-...`) matched the error-code pattern, and a file named after
+  a ruling matched the decision pattern, so the hook's path-only query turned
+  mixed: every lexical lane ran, use-time trust validation fanned out through
+  the graph, the hook's P95 rose from 31ms to 127ms on those edits, and the
+  n-gram lanes handed back pointers that shared a syllable with the path. Such
+  a query now takes the strict path plan like any other file.
+- `report` no longer files an opened pointer as a full-text open with no
+  delivery. The `consumed-without-delivery` data gap was keyed on the prose
+  funnel, which a pointer-tier recall never enters because it is recorded as
+  an abstention, so every pointer somebody opened was reported twice: once in
+  the pointer funnel as an open, and once as an open nothing had delivered.
+  The gap now counts only an open on a trace no surface delivered. The
+  `delivery.fulltext_open_without_delivery_events` figure changes meaning
+  accordingly; its name is unchanged.
+- `health` splits the hook's unreachable memories into the ones that name an
+  existing repository file in their text (anchorable, so a path anchor is
+  missing) and the ones that name none (nothing to anchor). The report keys
+  `evidence.path_anchor_reach.unanchored_naming_file` and
+  `unanchored_no_file` replace `unreachable`.
+- The instrumentation health check separates two readings it used to file as
+  defects. A payload field whose producer was removed, such as
+  `recall.consumed.authority_followed`, is listed as a retired field still
+  present on historical rows, with its sample count taken from the rows that
+  carry it rather than from every row of the event type. A component that
+  emits only when something goes wrong or somebody acts, such as
+  `memory-outcome` or `memory-recall-previous`, is listed as idle by design
+  for the window, with the measurement that already covers it, instead of as a
+  path that may never run. Both registers are printed with their reasons; an
+  undeclared constant or silent component is still a finding.
 
 ## [0.8.1] - 2026-10-06
 

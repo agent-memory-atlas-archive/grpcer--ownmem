@@ -35,6 +35,7 @@
       ]
     }
   },
+  "description": "deduplicated=true means at least one quote or pointer was withheld because this session already saw it. The result is then null when nothing was left, or the remainder when some of the envelope is new; the two are both deliveries the session had not seen, so neither is pinned to a null result.",
   "allOf": [
     {
       "if": { "properties": { "ok": { "const": true } }, "required": ["ok"] },
@@ -46,10 +47,6 @@
           "error": { "type": "object" }
         }
       }
-    },
-    {
-      "if": { "properties": { "deduplicated": { "const": true } }, "required": ["deduplicated"] },
-      "then": { "properties": { "result": { "type": "null" } } }
     }
   ],
   "additionalProperties": false

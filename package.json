@@ -1,6 +1,6 @@
 {
   "name": "ownmem",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Git-native project memory for AI coding agents. Deterministic local recall for Claude Code, Codex, Cursor, and Gemini CLI.",
   "type": "module",
   "license": "Apache-2.0",
